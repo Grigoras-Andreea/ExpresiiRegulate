@@ -117,12 +117,13 @@ class RegularExpression:
             return True
         if self.expr == "lambda":
             return True
-        if len(self.expr) == 1:
-            if ord(self.expr) < 40 and ord(self.expr) > 43 or\
-               ord(self.expr) < 48 and ord(self.expr) > 57 or\
-               ord(self.expr) < 65 and ord(self.expr) > 90 or\
-               ord(self.expr) < 97 and ord(self.expr) > 122 or\
-               ord(self.expr) != 124:
+        for letter in self.expr:
+            if ord(letter) < 40 or\
+               ord(letter) > 43 and ord(letter) < 48 or\
+               ord(letter) > 57 and ord(letter) < 65 or\
+               ord(letter) > 90 and ord(letter) < 97 or\
+               ord(letter) > 122 and ord(letter) < 124 or\
+               ord(letter) > 124 and ord(letter) < 128:
                 return False
         return True
     
