@@ -123,7 +123,8 @@ class RegularExpression:
                ord(letter) > 57 and ord(letter) < 65 or\
                ord(letter) > 90 and ord(letter) < 97 or\
                ord(letter) > 122 and ord(letter) < 124 or\
-               ord(letter) > 124 and ord(letter) < 128:
+               ord(letter) > 124 and ord(letter) < 128 or\
+               letter == " ":
                 return False
         return True
     
