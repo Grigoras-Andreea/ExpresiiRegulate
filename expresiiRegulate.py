@@ -63,7 +63,7 @@ class DeterministicFiniteAutomaton:
             existingTransitions.append(aux)
         return True
 
-    def verifyAutomaton(self):
+    def VerifyAutomaton(self):
         if self.q0 not in self.Q:
             return False
         for state in self.F:
@@ -82,14 +82,14 @@ class DeterministicFiniteAutomaton:
             return False
         return True
     
-    def printAutomaton(self):
+    def PrintAutomaton(self):
         print(self.Q)
         print(self.E)
         print(self.q0)
         print(self.F)
         print(self.delta)
     
-    def checkWord(self, word):
+    def CheckWord(self, word):
         currentState = self.q0
         for letter in word:
             foundTransition = False
@@ -102,11 +102,41 @@ class DeterministicFiniteAutomaton:
                 return False  
         return currentState in self.F
     
-    def IsDeterministic(self):
-        existingTransitions: list = []
-        for transition in self.delta:
-            aux: tuple = (transition[0],transition[1])
-            if aux in existingTransitions:
+class RegularExpression:
+    
+    def __init__(self, expr: str):
+        self.expr: str = expr
+        
+    def ReadRegularExpressionFile(self, file_name: str):
+        self.expr: str = ""
+        f = open(file_name, "r")
+        self.expr = f.readline()
+        
+    def VerifyRegularExpression(self):
+        if self.expr == "":
+            return True
+        if self.expr == "lambda":
+            return True
+        if len(self.expr) == 1:
+            if ord(self.expr) < 40 and ord(self.expr) > 43 or\
+               ord(self.expr) < 48 and ord(self.expr) > 57 or\
+               ord(self.expr) < 65 and ord(self.expr) > 90 or\
+               ord(self.expr) < 97 and ord(self.expr) > 122 or\
+               ord(self.expr) != 124:
                 return False
-            existingTransitions.append(aux)
         return True
+    
+    def GetRegularExpression(self):
+        return self.expr
+    
+def main():
+    
+    regEx = RegularExpression("")
+    regEx.ReadRegularExpressionFile('expresieRegulata.txt')
+    
+    if(regEx.VerifyRegularExpression() == True):
+        print("Expresia regulata", regEx.GetRegularExpression(), "este o expresie valida")
+    else:
+        print("Expresia regulata", regEx.GetRegularExpression(), "nu este o expresie valida")
+    
+main()
