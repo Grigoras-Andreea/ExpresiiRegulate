@@ -1,4 +1,4 @@
-class DeterministicFiniteAutomaton:
+﻿class DeterministicFiniteAutomaton:
     
     def __init__(self, Q: list[str], E: list[str], q0: str, F: list[str], delta: list[tuple[str]]):
         self.Q: list[str] = Q
@@ -12,19 +12,19 @@ class DeterministicFiniteAutomaton:
         self.E: list[str] = []
         self.F: list[str] = []
         self.delta: list[tuple[str]] = []
-        numar_stari = int(input("Numarul de stari: "))
+        numar_stari = int(input("Numărul de stari: "))
         for i in range(numar_stari):
             self.Q.append(input("Stare: "))
-        numar_litere = int(input("Numarul de litere: "))
+        numar_litere = int(input("Numărul de litere: "))
         for i in range(numar_litere):
-            self.E.append(input("Litera: "))
-        self.q0 = input("Starea initiala: ")
-        numar_stari_finale = int(input("Numarul de stari finale: "))
+            self.E.append(input("Literă: "))
+        self.q0 = input("Starea inițială: ")
+        numar_stari_finale = int(input("Numărul de stări finale: "))
         for i in range(numar_stari_finale):
-            self.F.append(input("Stare finala: "))
-        numar_tranzitii = int(input("Numarul de tranzitii: "))
+            self.F.append(input("Stare finală: "))
+        numar_tranzitii = int(input("Numărul de tranziții: "))
         for i in range(numar_tranzitii):
-            user_input = input("Introduceti tranzitia: ")
+            user_input = input("Introduceți tranziția: ")
             stare1, aux = user_input.split(",")
             litera, stare2 = aux.split("->")
             self.delta.append((stare1, litera, stare2))
@@ -131,14 +131,55 @@ class RegularExpression:
     def GetRegularExpression(self):
         return self.expr
     
+    def RegularExpressionInAFD(self):
+        # Transformare expresie regulată în AFD
+        # E pusă temporar ca să meargă meniul
+        return True
+    
 def main():
     
     regEx = RegularExpression("")
-    regEx.ReadRegularExpressionFile('expresieRegulata.txt')
+    regEx.ReadRegularExpressionFile('regEx.txt')
     
     if(regEx.VerifyRegularExpression() == True):
-        print("Expresia regulata", regEx.GetRegularExpression(), "este o expresie valida")
+        print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
+        M = regEx.RegularExpressionInAFD()
+        
+        while True:
+            print("\nMeniu:")
+            print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
+            print("b. Afișarea inteligibilă a expresiei regulate r din fișier;")
+            print("c. Verificare cuvânt în automat;")
+            print("x. Ieșire.")
+            
+            optiune = input("Alegeți o opțiune: ")
+            
+            if optiune == 'a':
+                print(M)
+                
+            elif optiune == 'b':
+                print(regEx.GetRegularExpression())
+                
+            elif optiune == 'c':
+                word = input("Introduceți cuvântul de verificat: ")
+                if M.verifyAutomaton():
+                    if M.IsDeterministic():
+                        if M.checkWord(word):
+                            print(f"Cuvântul '{word}' este acceptat de automat.")
+                        else:
+                            print(f"Cuvântul '{word}' nu este acceptat de automat.")
+                    else:
+                        print("Automatul nu este determinist.")
+                else:
+                    print("Automatul nu este valid.")
+                
+            elif optiune == 'x':
+                break
+
+            else:
+                print("Opțiune invalidă. Reîncercați.")
+        
     else:
-        print("Expresia regulata", regEx.GetRegularExpression(), "nu este o expresie valida")
+        print("Expresia regulată", regEx.GetRegularExpression(), "nu este o expresie validă.")
     
 main()
