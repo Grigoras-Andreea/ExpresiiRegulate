@@ -117,15 +117,18 @@ class RegularExpression:
             return True
         if self.expr == "lambda":
             return True
-        for letter in self.expr:
-            if ord(letter) < 40 or\
-               ord(letter) > 43 and ord(letter) < 48 or\
-               ord(letter) > 57 and ord(letter) < 65 or\
-               ord(letter) > 90 and ord(letter) < 97 or\
-               ord(letter) > 122 and ord(letter) < 124 or\
-               ord(letter) > 124 and ord(letter) < 128 or\
-               letter == " ":
+        for simbol in self.expr:
+            if ord(simbol) < 40 or\
+               ord(simbol) > 43 and ord(simbol) < 48 or\
+               ord(simbol) > 57 and ord(simbol) < 65 or\
+               ord(simbol) > 90 and ord(simbol) < 91 or\
+               ord(simbol) > 91 and ord(simbol) < 93 or\
+               ord(simbol) > 93 and ord(simbol) < 97 or\
+               ord(simbol) > 125 and ord(simbol) < 128 or\
+               simbol == " ":
                 return False
+        # Verificare paranteze
+            
         return True
     
     def GetRegularExpression(self):
