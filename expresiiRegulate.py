@@ -112,6 +112,41 @@ class RegularExpression:
         f = open(file_name, "r")
         self.expr = f.readline()
         
+    def VerifyBrackets(self):
+        bracketsStack = []
+        for simbol in self.expr:
+            if simbol == '(':
+                bracketsStack.append(simbol)
+            elif simbol == ')':
+                if not bracketsStack:
+                    return False
+                if bracketsStack[-1] == '(' or bracketsStack[-1] == ')':
+                    return False
+                bracketsStack.pop()
+            elif simbol == '[':
+                if bracketsStack and bracketsStack[-1] == '(':
+                    return False
+                bracketsStack.append(simbol)
+            elif simbol == ']':
+                if not bracketsStack:
+                    return False
+                if not (bracketsStack[-1] == '[' or bracketsStack[-1] == ']' or bracketsStack[-1] == ')'):
+                    return False
+                bracketsStack.pop()
+            elif simbol == '{':
+                if bracketsStack and (bracketsStack[-1] == '[' or bracketsStack[-1] == '('):
+                    return False
+                bracketsStack.append(simbol)
+            elif simbol == '}':
+                if not bracketsStack:
+                    return False
+                if not (bracketsStack[-1] != '(' or bracketsStack[-1] != '['):
+                    return False
+                bracketsStack.pop()
+        if not bracketsStack:
+            return True
+        return False
+        
     def VerifyRegularExpression(self):
         if self.expr == "":
             return True
@@ -127,7 +162,6 @@ class RegularExpression:
                ord(simbol) > 125 and ord(simbol) < 128 or\
                simbol == " ":
                 return False
-        # Verificare paranteze
             
         return True
     
