@@ -178,45 +178,41 @@ def main():
     regEx = RegularExpression("")
     regEx.ReadRegularExpressionFile('regEx.txt')
     
-    if(regEx.VerifyRegularExpression() == True):
-        print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
-        M = regEx.RegularExpressionInAFD()
+    if not regEx.VerifyRegularExpression():
+        print("Expresia regulată", regEx.GetRegularExpression(), "nu este o expresie validă.")
+        return
+    
+    print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
+    M = regEx.RegularExpressionInAFD()
         
-        while True:
-            print("\nMeniu:")
-            print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
-            print("b. Afișarea inteligibilă a expresiei regulate r din fișier;")
-            print("c. Verificare cuvânt în automat;")
-            print("x. Ieșire.")
+    while True:
+        print("\nMeniu:")
+        print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
+        print("b. Afișarea inteligibilă a expresiei regulate r din fișier;")
+        print("c. Verificare cuvânt în automat;")
+        print("x. Ieșire.")
             
-            optiune = input("Alegeți o opțiune: ")
+        optiune = input("Alegeți o opțiune: ")
             
-            if optiune == 'a':
+        if optiune == 'a':
                 print(M)
                 
-            elif optiune == 'b':
+        elif optiune == 'b':
                 print(regEx.GetRegularExpression())
                 
-            elif optiune == 'c':
-                word = input("Introduceți cuvântul de verificat: ")
-                if M.verifyAutomaton():
-                    if M.IsDeterministic():
-                        if M.checkWord(word):
-                            print(f"Cuvântul '{word}' este acceptat de automat.")
-                        else:
-                            print(f"Cuvântul '{word}' nu este acceptat de automat.")
-                    else:
-                        print("Automatul nu este determinist.")
-                else:
-                    print("Automatul nu este valid.")
+        elif optiune == 'c':
+            word = input("Introduceți cuvântul de verificat: ")
+            if M.verifyAutomaton():
+                if M.IsDeterministic():
+                   if M.checkWord(word):
+                       print(f"Cuvântul '{word}' este acceptat de automat.")
+                   else:
+                       print(f"Cuvântul '{word}' nu este acceptat de automat.")
                 
-            elif optiune == 'x':
-                break
+        elif optiune == 'x':
+            break
 
-            else:
-                print("Opțiune invalidă. Reîncercați.")
-        
-    else:
-        print("Expresia regulată", regEx.GetRegularExpression(), "nu este o expresie validă.")
+        else:
+            print("Opțiune invalidă. Reîncercați.")
     
 main()
