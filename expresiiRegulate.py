@@ -168,6 +168,10 @@ class RegularExpression:
     def GetRegularExpression(self):
         return self.expr
     
+    def RegularExpressionInAFN(self):
+        # Transformare expresie regulată în AFN cu lambda tranzitii
+        return True
+    
     def RegularExpressionInAFD(self):
         # Transformare expresie regulată în AFD
         # E pusă temporar ca să meargă meniul
