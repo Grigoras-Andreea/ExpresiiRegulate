@@ -168,7 +168,31 @@ class RegularExpression:
         return self.expr
     
     def ReversePolishNotation(self):
-        return self.expr
+        RPN = []
+        operatorStack = []
+        operatorPriorities = {'|' : 1, '.' : 2, '*' : 3}
+        for simbol in self.expr:
+            if simbol.isalnum():
+                RPN.append(simbol)
+            else:
+                if simbol == '(':
+                    operatorStack.append(simbol)
+                else:
+                    if simbol == ')':
+                        while operatorStack and operatorStack[-1] != '(':
+                            RPN.append(operatorStack[-1])
+                            operatorStack.pop()
+                        if operatorStack:
+                            operatorStack.pop()
+                    else:
+                        while operatorStack and operatorPriorities.get(operatorStack[-1], 0) >= operatorPriorities.get(simbol, 0):
+                            RPN.append(operatorStack[-1])
+                            operatorStack.pop()
+                        operatorStack.append(simbol)
+        while operatorStack:
+            RPN.append(operatorStack[-1])
+            operatorStack.pop()
+        return ''.join(RPN)
     
     def RegularExpressionInAFN(self):
         # Transformare expresie regulată în AFN cu lambda tranzitii
@@ -181,6 +205,17 @@ class RegularExpression:
     
 def main():
     
+    # TEST
+
+    regEx = RegularExpression("")
+    regEx.ReadRegularExpressionFile('regEx.txt')
+    
+    print(regEx.GetRegularExpression())
+    print(regEx.ReversePolishNotation())
+
+    # TEST
+
+    '''
     regEx = RegularExpression("")
     regEx.ReadRegularExpressionFile('regEx.txt')
     
@@ -190,7 +225,7 @@ def main():
     
     print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
     M = regEx.RegularExpressionInAFD()
-        
+      
     while True:
         print("\nMeniu:")
         print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
@@ -220,5 +255,6 @@ def main():
 
         else:
             print("Opțiune invalidă. Reîncercați.")
+    '''
     
 main()
