@@ -113,37 +113,17 @@ class RegularExpression:
         self.expr = f.readline()
         
     def VerifyBrackets(self):
-        bracketsStack = []
+        parenthesesStack = []
         for simbol in self.expr:
             if simbol == '(':
-                bracketsStack.append(simbol)
+                parenthesesStack.append(simbol)
             elif simbol == ')':
-                if not bracketsStack:
+                if not parenthesesStack:
                     return False
-                if bracketsStack[-1] == '(' or bracketsStack[-1] == ')':
+                if parenthesesStack[-1] == '(' or parenthesesStack[-1] == ')':
                     return False
-                bracketsStack.pop()
-            elif simbol == '[':
-                if bracketsStack and bracketsStack[-1] == '(':
-                    return False
-                bracketsStack.append(simbol)
-            elif simbol == ']':
-                if not bracketsStack:
-                    return False
-                if not (bracketsStack[-1] == '[' or bracketsStack[-1] == ']' or bracketsStack[-1] == ')'):
-                    return False
-                bracketsStack.pop()
-            elif simbol == '{':
-                if bracketsStack and (bracketsStack[-1] == '[' or bracketsStack[-1] == '('):
-                    return False
-                bracketsStack.append(simbol)
-            elif simbol == '}':
-                if not bracketsStack:
-                    return False
-                if not (bracketsStack[-1] != '(' or bracketsStack[-1] != '['):
-                    return False
-                bracketsStack.pop()
-        if not bracketsStack:
+                parenthesesStack.pop()
+        if not parenthesesStack:
             return True
         return False
         
@@ -195,7 +175,8 @@ class RegularExpression:
         return ''.join(RPN)
     
     def RegularExpressionInAFN(self):
-        # Transformare expresie regulată în AFN cu lambda tranzitii
+        RPN = self.ReversePolishNotation()
+        
         return True
     
     def RegularExpressionInAFD(self):
