@@ -154,18 +154,20 @@ class RegularExpression:
             return True
         for simbol in self.expr:
             if ord(simbol) < 40 or\
-               ord(simbol) > 43 and ord(simbol) < 48 or\
+               ord(simbol) > 42 and ord(simbol) < 46 or\
+               ord(simbol) > 46 and ord(simbol) < 48 or\
                ord(simbol) > 57 and ord(simbol) < 65 or\
-               ord(simbol) > 90 and ord(simbol) < 91 or\
-               ord(simbol) > 91 and ord(simbol) < 93 or\
-               ord(simbol) > 93 and ord(simbol) < 97 or\
-               ord(simbol) > 125 and ord(simbol) < 128 or\
+               ord(simbol) > 90 and ord(simbol) < 97 or\
+               ord(simbol) > 122 and ord(simbol) < 124 or\
+               ord(simbol) > 124 or\
                simbol == " ":
                 return False
-            
         return True
     
     def GetRegularExpression(self):
+        return self.expr
+    
+    def ReversePolishNotation(self):
         return self.expr
     
     def RegularExpressionInAFN(self):
