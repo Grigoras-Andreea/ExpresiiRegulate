@@ -181,7 +181,6 @@ class RegularExpression:
     
     def RegularExpressionInAFD(self):
         # Transformare expresie regulată în AFD
-        # E pusă temporar ca să meargă meniul
         return True
     
 def main():
