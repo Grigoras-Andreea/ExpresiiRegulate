@@ -174,14 +174,19 @@ class RegularExpression:
             operatorStack.pop()
         return ''.join(RPN)
     
-    def RegularExpressionInAFN(self):
+    def RPNinAFNlambdaTransitions(self):
         RPN = self.ReversePolishNotation()
-        
+        # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
+        return True
+    
+    def AFNlambdaTransitionsInAFD(self):
+        # Transformare AFN cu lambda-tranziții în AFD
         return True
     
     def RegularExpressionInAFD(self):
         # Transformare expresie regulată în AFD
-        return True
+        self.RPNinAFNlambdaTransitions()
+        self.AFNlambdaTransitionsInAFD()
     
 def main():
     
