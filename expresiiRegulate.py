@@ -142,6 +142,8 @@ class RegularExpression:
                ord(simbol) > 124 or\
                simbol == " ":
                 return False
+        if not self.VerifyBrackets():
+            return False
         return True
     
     def GetRegularExpression(self):
