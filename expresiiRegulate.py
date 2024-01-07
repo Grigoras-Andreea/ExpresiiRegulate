@@ -360,7 +360,7 @@ class RegularExpression:
        
     def RegularExpressionInAFD(self):
             # Transformare expresie regulată în AFD
-             AFD = self.AFNlambdaTransitionsInAFD
+             AFD = self.AFNlambdaTransitionsInAFD()
              return AFD    
     
 def main():
