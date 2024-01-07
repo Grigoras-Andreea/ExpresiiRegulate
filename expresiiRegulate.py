@@ -271,7 +271,57 @@ class RegularExpression:
     
     def AFNlambdaTransitionsInAFD(self):
         # Transformare AFN cu lambda-tranziții în AFD
-        return True
+        AFN = self.RPNinAFNlambdaTransitions()
+
+        lambda_closure = {}
+        for stare in AFN.Q:
+            lambda_closure[stare] = self.lambda_closure(AFN, stare)
+
+        AFD = DeterministicFiniteAutomaton([], [], '', [], [])
+        AFD.Q = [AFN.lambdaInchidere([AFN.q0])]  # Starea inițială a AFD
+        AFD.E = AFN.E
+        AFD.F = []
+        coada_stari_noi = [AFN.lambdaInchidere([AFN.q0])]
+        while coada_stari_noi:
+            stari_curente = coada_stari_noi.pop(0)
+            AFD.Q.append(stari_curente)
+
+            for litera in AFD.E:
+                U = AFN.lambdaInchidere(AFN.mutare(stari_curente, litera))
+                if U not in AFD.Q and U not in coada_stari_noi:
+                    coada_stari_noi.append(U)
+                    
+        for stare_AFD in AFD.Q:
+            for stare_AFN in stare_AFD:
+                if stare_AFN in AFN.F and stare_AFD not in AFD.F:
+                    AFD.F.append(stare_AFD)
+                    break
+
+        for stare_AFD in AFD.Q:
+            for litera in AFD.E:
+                U = AFN.lambdaInchidere(AFN.mutare(stare_AFD, litera))
+                AFD.delta.append((stare_AFD, litera, U))
+
+        return AFD
+
+    def lambda_closure(self, AFN, stare):
+        lambda_closure = []
+        lambda_closure.append(stare)
+        for stare in lambda_closure:
+            if (stare, 'lambda') in AFN.delta:
+                for stare in AFN.delta[(stare, 'lambda')]:
+                    if stare not in lambda_closure:
+                        lambda_closure.append(stare)
+        return lambda_closure
+    def mutare(self, stari, litera):
+        mutare = []
+        for stare in stari:
+            if (stare, litera) in self.delta:
+                for stare in self.delta[(stare, litera)]:
+                    if stare not in mutare:
+                        mutare.append(stare)
+        return mutare
+   
     
     def RegularExpressionInAFD(self):
         # Transformare expresie regulată în AFD
