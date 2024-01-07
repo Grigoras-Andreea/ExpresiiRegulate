@@ -176,9 +176,52 @@ class RegularExpression:
             operatorStack.pop()
         return ''.join(RPN)
     
+    def uniteAutomatons(self, M1: DeterministicFiniteAutomaton, M2: DeterministicFiniteAutomaton, symbol: str, counter: int):
+        aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
+        if symbol == '|':
+            aux.Q.append('q'+str(counter))
+            aux.Q.append('q'+str(counter+1))
+            aux.Q.extend(M1.Q)
+            aux.Q.extend(M2.Q)
+            aux.E.extend(M1.E)
+            aux.E.extend(M2.E)
+            aux.q0 = 'q'+str(counter)
+            aux.F.append('q'+str(counter+1))
+            aux.delta.extend(M1.delta)
+            aux.delta.extend(M2.delta)
+            aux.delta.append(('q'+str(counter), 'lambda', M1.q0))
+            aux.delta.append(('q'+str(counter), 'lambda', M2.q0))
+            for stare in M1.F:
+                aux.delta.append((stare, 'lambda', 'q'+str(counter+1)))
+            for stare in M2.F:
+                aux.delta.append((stare, 'lambda', 'q'+str(counter+1)))
+        return aux
+    
     def RPNinAFNlambdaTransitions(self):
         RPN = self.ReversePolishNotation()
         # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
+        SA: list[DeterministicFiniteAutomaton] = []
+        counter: int = 0
+        for index in range(len(RPN)):
+            if RPN[index].isalpha():
+                aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
+                aux.Q.append('q'+str(counter))
+                aux.Q.append('q'+str(counter+1))
+                aux.E.append(RPN[index])
+                aux.q0 = 'q'+str(counter)
+                aux.F.append('q'+str(counter+1))
+                aux.delta.append(('q'+str(counter), RPN[index], 'q'+str(counter+1)))
+                SA.append(aux)
+                counter += 2
+            elif RPN[index] == '|':
+                B: DeterministicFiniteAutomaton = SA[-1]
+                SA.pop()
+                A: DeterministicFiniteAutomaton = SA[-1]
+                SA.pop()
+                aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '|', counter)
+                SA.append(aux)
+                counter += 2
+
         return True
     
     def AFNlambdaTransitionsInAFD(self):
