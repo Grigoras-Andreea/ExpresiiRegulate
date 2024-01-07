@@ -195,6 +195,11 @@ class RegularExpression:
                 aux.delta.append((stare, 'lambda', 'q'+str(counter+1)))
             for stare in M2.F:
                 aux.delta.append((stare, 'lambda', 'q'+str(counter+1)))
+        else:
+            aux.q0 = M1.q0
+            aux.F = M2.F
+            #stare finala M1 se uneste cu stare initiala M2
+            #fA = iB se inlocuieste aste pe peste tot unde apare fA sau iB in delta
         return aux
     
     def RPNinAFNlambdaTransitions(self):
@@ -219,6 +224,21 @@ class RegularExpression:
                 A: DeterministicFiniteAutomaton = SA[-1]
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '|', counter)
+                SA.append(aux)
+                counter += 2
+            elif RPN[index] == '.':#not made yet
+                B: DeterministicFiniteAutomaton = SA[-1]
+                SA.pop()
+                A: DeterministicFiniteAutomaton = SA[-1]
+                SA.pop()
+                aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '.', counter)
+                SA.append(aux)
+                counter += 2
+            elif RPN[index] == '*':#not made yet
+                A: DeterministicFiniteAutomaton = SA[-1]
+                SA.pop()
+                aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
+                #operatii pentru stelare
                 SA.append(aux)
                 counter += 2
 
