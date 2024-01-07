@@ -265,7 +265,7 @@ class RegularExpression:
                 aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '.', counter)
                 SA.append(aux)
                 counter += 2
-            elif RPN[index] == '*':#not made yet
+            elif RPN[index] == '*':
                 A: DeterministicFiniteAutomaton = SA[-1]
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
@@ -286,64 +286,68 @@ class RegularExpression:
         return SA[-1]
     
     def AFNlambdaTransitionsInAFD(self):
-        # Transformare AFN cu lambda-tranziții în AFD
         AFN = self.RPNinAFNlambdaTransitions()
-
-        lambda_closure = {}
-        for stare in AFN.Q:
-            lambda_closure[stare] = self.LambdaClosure(AFN, stare)
-
-        AFD = DeterministicFiniteAutomaton([], [], '', [], [])
-        AFD.Q = [AFN.LambdaClosure([AFN.q0])]  # Starea inițială a AFD
+        AFD: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
+        new_transitions = {}
+        initial_state = AFN.q0
+        lambda_transition_for_state = self.LambdaClosure(initial_state, AFN.delta)
+        new_transitions[tuple(lambda_transition_for_state)] = [] #lista de liste indexul corespunde cu indexul din E
+        lenght = 0
+        while lenght != len(new_transitions):
+            lenght = len(new_transitions)
+            tranzitie = next(iter(new_transitions))
+            for litera in AFN.E:
+                accepted_states_for_letter = []
+                aux = []
+                for state in tranzitie:
+                    for transition in AFN.delta:
+                        if transition[0] == state and transition[1] == litera:
+                            accepted_states_for_letter.append(transition[2])
+                for accepted_state in accepted_states_for_letter:
+                    aux.extend(self.LambdaClosure(accepted_state, AFN.delta))
+                if aux not in new_transitions[tuple(tranzitie)]:
+                    new_transitions[tuple(tranzitie)].append(aux)
+                if tuple(aux) not in new_transitions:
+                    new_transitions[tuple(aux)] = []
+        i = 0
+        AFN.E = list(set(AFN.E))
+        for key in new_transitions:
+            if 'q\'' + str(i) not in AFD.Q:
+                AFD.Q.append('q\'' + str(i))
+                j = 0
+            for value in new_transitions[key]:
+                AFD.delta.append(('q\'' + str(i), AFN.E[j], 'q\'' + str(list(new_transitions.keys()).index(tuple(value)))))
+                j += 1
+            i += 1
+        for final_state in AFN.F:
+            for key in new_transitions:
+                if final_state in key:
+                    AFD.F.append('q\'' + str(list(new_transitions.keys()).index(key)))
+        AFD.q0 = AFD.Q[0]
         AFD.E = AFN.E
-        AFD.F = []
-        coada_stari_noi = [AFN.LambdaClosure([AFN.q0])]
-        while coada_stari_noi:
-            stari_curente = coada_stari_noi.pop(0)
-            AFD.Q.append(stari_curente)
-
-            for litera in AFD.E:
-                U = AFN.LambdaClosure(AFN.mutare(stari_curente, litera))
-                if U not in AFD.Q and U not in coada_stari_noi:
-                    coada_stari_noi.append(U)
-                    
-        for stare_AFD in AFD.Q:
-            for stare_AFN in stare_AFD:
-                if stare_AFN in AFN.F and stare_AFD not in AFD.F:
-                    AFD.F.append(stare_AFD)
-                    break
-
-        for stare_AFD in AFD.Q:
-            for litera in AFD.E:
-                U = AFN.LambdaClosure(AFN.mutare(stare_AFD, litera))
-                AFD.delta.append((stare_AFD, litera, U))
-
+        new_transitions = {key: value for key, value in new_transitions.items() if value}
+            
+        
         return AFD
-
-    def LambdaClosure(self, AFN, stare):
-        lambda_closure = []
-        lambda_closure.append(stare)
-        for stare in lambda_closure:
-            if (stare, 'lambda') in AFN.delta:
-                for stare in AFN.delta[(stare, 'lambda')]:
-                    if stare not in lambda_closure:
-                        lambda_closure.append(stare)
+        
+            
+    def LambdaClosure(self, stare: str, AFN_transitions):
+        ok = True
+        lambda_closure = [stare]
+        for transition in AFN_transitions:
+            if transition[0] == stare and transition[1] == 'lambda':
+                lambda_closure.append(transition[2])
+        while ok:
+            new_lambda_closure = lambda_closure
+            for transition in lambda_closure:
+                if transition[0] == stare and transition[1] == 'lambda':
+                    new_lambda_closure.append(transition[2])
+            if new_lambda_closure == lambda_closure:
+                ok = False
+            lambda_closure = new_lambda_closure
         return lambda_closure
+
     
-    def Mutare(self, stari, litera):
-        mutare = []
-        for stare in stari:
-            if (stare, litera) in self.delta:
-                for stare in self.delta[(stare, litera)]:
-                    if stare not in mutare:
-                        mutare.append(stare)
-        return mutare
-   
-    
-    def RegularExpressionInAFD(self):
-        # Transformare expresie regulată în AFD
-        self.RPNinAFNlambdaTransitions()
-        self.AFNlambdaTransitionsInAFD()
     
 def main():
     
@@ -363,9 +367,9 @@ def main():
         return
     
     print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
-    M = regEx.RegularExpressionInAFD()
+    M = regEx.AFNlambdaTransitionsInAFD()
       
-    '''
+    
     while True:
         print("\nMeniu:")
         print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
@@ -377,25 +381,27 @@ def main():
             
         if optiune == 'a':
             M.PrintAutomaton()
-            M.PrintAutomatonFile('automaton.txt')
+            #M.PrintAutomatonFile('automaton.txt')
                 
         elif optiune == 'b':
             print(regEx.GetRegularExpression())
                 
         elif optiune == 'c':
             word = input("Introduceți cuvântul de verificat: ")
-            if M.verifyAutomaton():
+            if M.VerifyAutomaton():
                 if M.IsDeterministic():
-                   if M.checkWord(word):
+                   if M.CheckWord(word):
                        print(f"Cuvântul '{word}' este acceptat de automat.")
                    else:
                        print(f"Cuvântul '{word}' nu este acceptat de automat.")
+            else:
+                print("Automatul nu este determinist.")    
                 
         elif optiune == 'x':
             break
 
         else:
             print("Opțiune invalidă. Reîncercați.")
-            '''
+            
     
 main()
