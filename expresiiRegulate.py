@@ -108,17 +108,18 @@
         
     
     def CheckWord(self, word):
-        currentState = self.q0
+        currentState: list = [self.q0]
         for letter in word:
-            foundTransition = False
-            for transition in self.delta:
-                if transition[0] == currentState and transition[1] == letter:
-                    currentState = transition[2]
-                    foundTransition = True
-                    break
-            if not foundTransition:
-                return False  
-        return currentState in self.F
+            nextState: list = []
+            for state in currentState:
+                for transition in self.delta:
+                    if transition[0] == state and transition[1] == letter:
+                        nextState.append(transition[2])
+            currentState = nextState
+        for state in currentState:
+            if state in self.F:
+                return True
+        return False
     
 class RegularExpression:
     
@@ -247,6 +248,7 @@ class RegularExpression:
     def RPNinAFNlambdaTransitions(self):
         RPN = self.ReversePolishNotation()
         # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
+        
         SA: list[DeterministicFiniteAutomaton] = []
         counter: int = 0
         for index in range(len(RPN)):
@@ -377,16 +379,16 @@ def main():
             print("Expresia regulată", regEx.GetRegularExpression(), "nu este o expresie validă.")
             return
     
-    print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
-    M = regEx.AFNlambdaTransitionsInAFD()
+        print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
+        M = regEx.AFNlambdaTransitionsInAFD()
       
     
-    while True:
-        print("\nMeniu:")
-        print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
-        print("b. Afișarea inteligibilă a expresiei regulate r din fișier;")
-        print("c. Verificare cuvânt în automat;")
-        print("x. Ieșire.")
+        while True:
+            print("\nMeniu:")
+            print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
+            print("b. Afișarea inteligibilă a expresiei regulate r din fișier;")
+            print("c. Verificare cuvânt în automat;")
+            print("x. Ieșire.")
             
             optiune = input("Alegeți o opțiune: ")
             
