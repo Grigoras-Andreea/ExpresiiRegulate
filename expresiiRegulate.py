@@ -90,11 +90,22 @@
         print(self.delta)
     
     def PrintAutomatonFile(self, file_name: str):
-        file_name.write(self.Q)
-        file_name.write(self.E)
-        file_name.write(self.q0)
-        file_name.write(self.F)
-        file_name.write(self.delta)
+        f = open(file_name, "w")
+        f.write(str(self.Q))
+        f.write("\n")
+        f.write(str(self.E))
+        f.write("\n")
+        f.write(str(self.q0))
+        f.write("\n")
+        f.write(str(self.F))
+        f.write("\n")
+        f.write(str(len(self.delta)))
+        f.write("\n")
+        for transition in self.delta:
+            f.write(str(transition))
+            f.write("\n")
+        f.close()
+        
     
     def CheckWord(self, word):
         currentState = self.q0
@@ -351,20 +362,20 @@ class RegularExpression:
     
 def main():
     
-    # TEST
+        # TEST
 
-    regEx = RegularExpression("")
-    regEx.ReadRegularExpressionFile('regEx.txt')
+        regEx = RegularExpression("")
+        regEx.ReadRegularExpressionFile('regEx.txt')
     
-    print(regEx.GetRegularExpression())
-    print(regEx.ReversePolishNotation())
+        print(regEx.GetRegularExpression())
+        print(regEx.ReversePolishNotation())
 
-    regEx = RegularExpression("")
-    regEx.ReadRegularExpressionFile('regEx.txt')
+        regEx = RegularExpression("")
+        regEx.ReadRegularExpressionFile('regEx.txt')
     
-    if not regEx.VerifyRegularExpression():
-        print("Expresia regulată", regEx.GetRegularExpression(), "nu este o expresie validă.")
-        return
+        if not regEx.VerifyRegularExpression():
+            print("Expresia regulată", regEx.GetRegularExpression(), "nu este o expresie validă.")
+            return
     
     print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
     M = regEx.AFNlambdaTransitionsInAFD()
@@ -377,28 +388,26 @@ def main():
         print("c. Verificare cuvânt în automat;")
         print("x. Ieșire.")
             
-        optiune = input("Alegeți o opțiune: ")
+            optiune = input("Alegeți o opțiune: ")
             
-        if optiune == 'a':
-            M.PrintAutomaton()
-            #M.PrintAutomatonFile('automaton.txt')
+            if optiune == 'a':
+                M.PrintAutomaton()
+                M.PrintAutomatonFile('automaton.txt')
                 
-        elif optiune == 'b':
-            print(regEx.GetRegularExpression())
+            elif optiune == 'b':
+                print(regEx.GetRegularExpression())
                 
-        elif optiune == 'c':
-            word = input("Introduceți cuvântul de verificat: ")
-            if M.VerifyAutomaton():
-                if M.IsDeterministic():
-                   if M.CheckWord(word):
-                       print(f"Cuvântul '{word}' este acceptat de automat.")
-                   else:
-                       print(f"Cuvântul '{word}' nu este acceptat de automat.")
-            else:
-                print("Automatul nu este determinist.")    
+            elif optiune == 'c':
+                word = input("Introduceți cuvântul de verificat: ")
+                if M.VerifyAutomaton():
+                    if M.IsDeterministic():
+                       if M.CheckWord(word):
+                           print(f"Cuvântul '{word}' este acceptat de automat.")
+                       else:
+                           print(f"Cuvântul '{word}' nu este acceptat de automat.")
                 
-        elif optiune == 'x':
-            break
+            elif optiune == 'x':
+                break
 
         else:
             print("Opțiune invalidă. Reîncercați.")
