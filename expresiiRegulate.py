@@ -89,6 +89,13 @@
         print(self.F)
         print(self.delta)
     
+    def PrintAutomatonFile(self, file_name: str):
+        file_name.write(self.Q)
+        file_name.write(self.E)
+        file_name.write(self.q0)
+        file_name.write(self.F)
+        file_name.write(self.delta)
+    
     def CheckWord(self, word):
         currentState = self.q0
         for letter in word:
@@ -120,7 +127,7 @@ class RegularExpression:
             elif simbol == ')':
                 if not parenthesesStack:
                     return False
-                if parenthesesStack[-1] == '(' or parenthesesStack[-1] == ')':
+                if parenthesesStack[-1] == ')':
                     return False
                 parenthesesStack.pop()
         if not parenthesesStack:
@@ -285,19 +292,19 @@ class RegularExpression:
 
         lambda_closure = {}
         for stare in AFN.Q:
-            lambda_closure[stare] = self.lambda_closure(AFN, stare)
+            lambda_closure[stare] = self.LambdaClosure(AFN, stare)
 
         AFD = DeterministicFiniteAutomaton([], [], '', [], [])
-        AFD.Q = [AFN.lambdaInchidere([AFN.q0])]  # Starea inițială a AFD
+        AFD.Q = [AFN.LambdaClosure([AFN.q0])]  # Starea inițială a AFD
         AFD.E = AFN.E
         AFD.F = []
-        coada_stari_noi = [AFN.lambdaInchidere([AFN.q0])]
+        coada_stari_noi = [AFN.LambdaClosure([AFN.q0])]
         while coada_stari_noi:
             stari_curente = coada_stari_noi.pop(0)
             AFD.Q.append(stari_curente)
 
             for litera in AFD.E:
-                U = AFN.lambdaInchidere(AFN.mutare(stari_curente, litera))
+                U = AFN.LambdaClosure(AFN.mutare(stari_curente, litera))
                 if U not in AFD.Q and U not in coada_stari_noi:
                     coada_stari_noi.append(U)
                     
@@ -309,12 +316,12 @@ class RegularExpression:
 
         for stare_AFD in AFD.Q:
             for litera in AFD.E:
-                U = AFN.lambdaInchidere(AFN.mutare(stare_AFD, litera))
+                U = AFN.LambdaClosure(AFN.mutare(stare_AFD, litera))
                 AFD.delta.append((stare_AFD, litera, U))
 
         return AFD
 
-    def lambda_closure(self, AFN, stare):
+    def LambdaClosure(self, AFN, stare):
         lambda_closure = []
         lambda_closure.append(stare)
         for stare in lambda_closure:
@@ -323,7 +330,8 @@ class RegularExpression:
                     if stare not in lambda_closure:
                         lambda_closure.append(stare)
         return lambda_closure
-    def mutare(self, stari, litera):
+    
+    def Mutare(self, stari, litera):
         mutare = []
         for stare in stari:
             if (stare, litera) in self.delta:
@@ -348,9 +356,6 @@ def main():
     print(regEx.GetRegularExpression())
     print(regEx.ReversePolishNotation())
 
-    # TEST
-
-    '''
     regEx = RegularExpression("")
     regEx.ReadRegularExpressionFile('regEx.txt')
     
@@ -361,6 +366,7 @@ def main():
     print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
     M = regEx.RegularExpressionInAFD()
       
+    '''
     while True:
         print("\nMeniu:")
         print("a. Afișarea automatului M atât în consolă, cât și într-un fișier de ieșire;")
@@ -371,10 +377,11 @@ def main():
         optiune = input("Alegeți o opțiune: ")
             
         if optiune == 'a':
-                print(M)
+            M.PrintAutomaton()
+            M.PrintAutomatonFile('automaton.txt')
                 
         elif optiune == 'b':
-                print(regEx.GetRegularExpression())
+            print(regEx.GetRegularExpression())
                 
         elif optiune == 'c':
             word = input("Introduceți cuvântul de verificat: ")
@@ -390,10 +397,6 @@ def main():
 
         else:
             print("Opțiune invalidă. Reîncercați.")
-    '''
+            '''
     
-#main()
-
-RE: RegularExpression = RegularExpression("")
-AFN = RE.RPNinAFNlambdaTransitions()
-AFN.PrintAutomaton()
+main()
