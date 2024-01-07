@@ -228,7 +228,7 @@ class RegularExpression:
     
     def RPNinAFNlambdaTransitions(self):
         #RPN = self.ReversePolishNotation()
-        RPN = ['a', 'b', '|']
+        RPN = ['a', 'b', '*']
         # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
         SA: list[DeterministicFiniteAutomaton] = []
         counter: int = 0
@@ -264,6 +264,16 @@ class RegularExpression:
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
                 #operatii pentru stelare
+                aux.Q.append('q'+str(counter))
+                aux.Q.append('q'+str(counter+1))
+                aux.E.extend(A.E)
+                aux.q0 = 'q'+str(counter)
+                aux.F.append('q'+str(counter+1))
+                aux.delta.extend(A.delta)
+                aux.delta.append((aux.q0, 'lambda', A.q0))
+                aux.delta.append((A.F[0], 'lambda', aux.F[0]))
+                aux.delta.append((aux.q0, 'lambda', aux.F[0]))
+                aux.delta.append((A.F[0], 'lambda', A.q0))
                 SA.append(aux)
                 counter += 2
 
