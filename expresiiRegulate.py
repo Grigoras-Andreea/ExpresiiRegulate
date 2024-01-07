@@ -227,8 +227,7 @@ class RegularExpression:
         return aux
     
     def RPNinAFNlambdaTransitions(self):
-        #RPN = self.ReversePolishNotation()
-        RPN = ['a', 'b', '*']
+        RPN = self.ReversePolishNotation()
         # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
         SA: list[DeterministicFiniteAutomaton] = []
         counter: int = 0
