@@ -198,12 +198,37 @@ class RegularExpression:
         else:
             aux.q0 = M1.q0
             aux.F = M2.F
+            aux.Q.extend(M1.Q)
+            aux.Q.extend(M2.Q)
+            aux.E.extend(M1.E)
+            aux.E.extend(M2.E)
+            aux.delta.extend(M1.delta)
+            aux.delta.extend(M2.delta)
             #stare finala M1 se uneste cu stare initiala M2
             #fA = iB se inlocuieste aste pe peste tot unde apare fA sau iB in delta
+
+            index_to_remove: list = []
+            
+            for transition in aux.delta:
+                if transition[0] == M2.q0:
+                    aux.delta.append((M1.F[0] + '=' + M2.q0, transition[1], transition[2]))
+                    index_to_remove.append(transition)
+                if transition[2] == M1.F[0]:
+                    aux.delta.append((transition[0], transition[1], M1.F[0] + '=' + M2.q0))
+                    index_to_remove.append(transition)
+                    
+            for index in reversed(index_to_remove):
+                aux.delta.remove(index)
+                
+            for stare in M1.F:
+                index = aux.Q.index(stare)
+                aux.Q[index] = stare + '=' + M2.q0
+            aux.Q.remove(M2.q0)
         return aux
     
     def RPNinAFNlambdaTransitions(self):
-        RPN = self.ReversePolishNotation()
+        #RPN = self.ReversePolishNotation()
+        RPN = ['a', 'b', '|']
         # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
         SA: list[DeterministicFiniteAutomaton] = []
         counter: int = 0
@@ -226,7 +251,7 @@ class RegularExpression:
                 aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '|', counter)
                 SA.append(aux)
                 counter += 2
-            elif RPN[index] == '.':#not made yet
+            elif RPN[index] == '.':
                 B: DeterministicFiniteAutomaton = SA[-1]
                 SA.pop()
                 A: DeterministicFiniteAutomaton = SA[-1]
@@ -242,7 +267,7 @@ class RegularExpression:
                 SA.append(aux)
                 counter += 2
 
-        return True
+        return SA[-1]
     
     def AFNlambdaTransitionsInAFD(self):
         # Transformare AFN cu lambda-tranziții în AFD
@@ -307,4 +332,8 @@ def main():
             print("Opțiune invalidă. Reîncercați.")
     '''
     
-main()
+#main()
+
+RE: RegularExpression = RegularExpression("")
+AFN = RE.RPNinAFNlambdaTransitions()
+AFN.PrintAutomaton()
