@@ -277,7 +277,7 @@ class RegularExpression:
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '.', counter)
                 SA.append(aux)
-                counter += 2
+                #counter += 2
             elif RPN[index] == '*':
                 A: DeterministicFiniteAutomaton = SA[-1]
                 SA.pop()
@@ -354,8 +354,9 @@ class RegularExpression:
         while ok:
             new_lambda_closure = lambda_closure
             for transition in lambda_closure:
-                if transition[0] == stare and transition[1] == 'lambda':
-                    new_lambda_closure.append(transition[2])
+                for AFNtransition in AFN_transitions:
+                    if AFNtransition[0] == transition and AFNtransition[1] == 'lambda':
+                        new_lambda_closure.append(AFNtransition[2])
             if new_lambda_closure == lambda_closure:
                 ok = False
             lambda_closure = new_lambda_closure
@@ -382,6 +383,7 @@ def main():
     
         print("Expresia regulată", regEx.GetRegularExpression(), "este o expresie validă.")
         M = regEx.AFNlambdaTransitionsInAFD()
+        n = regEx.RPNinAFNlambdaTransitions()
       
     
         while True:
@@ -394,6 +396,7 @@ def main():
             optiune = input("Alegeți o opțiune: ")
             
             if optiune == 'a':
+                n.PrintAutomaton()
                 M.PrintAutomaton()
                 M.PrintAutomatonFile('automaton.txt')
                 
