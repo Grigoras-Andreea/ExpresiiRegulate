@@ -283,6 +283,7 @@ class RegularExpression:
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
                 #operatii pentru stelare
+                aux.Q.extend(A.Q)
                 aux.Q.append('q'+str(counter))
                 aux.Q.append('q'+str(counter+1))
                 aux.E.extend(A.E)
