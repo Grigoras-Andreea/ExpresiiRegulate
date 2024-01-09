@@ -223,9 +223,7 @@ class RegularExpression:
             aux.E.extend(M2.E)
             aux.delta.extend(M1.delta)
             aux.delta.extend(M2.delta)
-            #stare finala M1 se uneste cu stare initiala M2
-            #fA = iB se inlocuieste aste pe peste tot unde apare fA sau iB in delta
-
+            
             index_to_remove: list = []
             
             for transition in aux.delta:
@@ -247,7 +245,6 @@ class RegularExpression:
     
     def RPNinAFNlambdaTransitions(self):
         RPN = self.ReversePolishNotation()
-        # Transformare formă poloneză postfixată (RPN) în AFN cu lambda-tranziții
         
         SA: list[DeterministicFiniteAutomaton] = []
         counter: int = 0
@@ -277,12 +274,11 @@ class RegularExpression:
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = self.uniteAutomatons(A, B, '.', counter)
                 SA.append(aux)
-                #counter += 2
             elif RPN[index] == '*':
                 A: DeterministicFiniteAutomaton = SA[-1]
                 SA.pop()
                 aux: DeterministicFiniteAutomaton = DeterministicFiniteAutomaton([], [], "", [], [])
-                #operatii pentru stelare
+                
                 aux.Q.extend(A.Q)
                 aux.Q.append('q'+str(counter))
                 aux.Q.append('q'+str(counter+1))
@@ -305,7 +301,7 @@ class RegularExpression:
         new_transitions = {}
         initial_state = AFN.q0
         lambda_transition_for_state = self.LambdaClosure(initial_state, AFN.delta)
-        new_transitions[tuple(lambda_transition_for_state)] = [] #lista de liste indexul corespunde cu indexul din E
+        new_transitions[tuple(lambda_transition_for_state)] = [] 
         lenght = 0
         while lenght != len(new_transitions):
             lenght = len(new_transitions)
@@ -366,7 +362,6 @@ class RegularExpression:
     
 def main():
     
-        # TEST
 
         regEx = RegularExpression("")
         regEx.ReadRegularExpressionFile('regEx.txt')
